@@ -1,0 +1,26 @@
+body{
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+body > div{
+    width: 50%;
+    text-align: center;
+   
+}
+
+#todo > div{
+    border: 1px solid black;
+}
+
+#completed > div{
+    border: 1px solid black;
+}
+
+#addTodoBtn{
+    display: grid;
+    position: fixed;
+    height: 50px;
+    align-items: center;
+}
