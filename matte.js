@@ -1,6 +1,15 @@
 
 let todoContainer = document.getElementById("todo");
 let completedContainer = document.getElementById("completed");
+let addNewCard = document.getElementById("addTodoBtn");
+let addCustomCard = document.getElementById("customBtn");
+let closeModule = document.getElementById("closeBtn");
+let submit = document.getElementById("submit");
+let addTitle = document.getElementById("title");
+let addDescription = document.getElementById("description");
+
+//init
+fetchAll();
 
 //Fetchar alla todos från API
 function fetchAll() {
@@ -9,7 +18,6 @@ function fetchAll() {
             return res.json();
         })
         .then(data => {
-            console.log(data);
             displayAllTodo(data.todos);
         }).catch((err) => {
             console.log(err);
@@ -25,11 +33,11 @@ function displayAllTodo(data) {
         let card = document.createElement("div");
         let titel = document.createElement("h3");
         titel.innerHTML = data.userId;
-        let para = document.createElement("div")
+        let para = document.createElement("div");
         para.innerHTML = data.todo;
-        let datum = document.createElement("div");
-        datum.innerHTML = ("This card was created: " + new Date());
-        let datumDone = document.createElement("div");
+        para.style.fontSize = "x-large";
+
+
         let todoDone = document.createElement("button");
         todoDone.addEventListener("click", () => { moveTodo(data.id, data.completed, card) });
         let deleteBtn = document.createElement("button");
@@ -37,20 +45,22 @@ function displayAllTodo(data) {
         deleteBtn.addEventListener("click", () => { deleteTodo(data.id, card) });
 
 
-        card.append(titel, para, datum, datumDone, todoDone, deleteBtn);
+        card.append(titel, para, todoDone, deleteBtn);
 
         if (data.completed === false) {
-            datumDone.innerHTML = ("--");
-            todoDone.innerHTML = "Inte färdig";
+            let datum = document.createElement("div");
+            datum.innerHTML = ("This card was created: " + new Date());
+            todoDone.innerHTML = "Move to Done";
             todoDone.setAttribute("class", "notDone");
+            card.append(datum);
             todoContainer.append(card);
-
-
         }
         else {
-            datumDone.innerHTML = new Date();
-            todoDone.innerHTML = "Färdig";
+            let datumDone = document.createElement("div");
+            datumDone.innerHTML = ("This card was completed: " + new Date());
+            todoDone.innerHTML = "Move to Todo";
             todoDone.setAttribute("class", "done");
+            card.append(datumDone);
             completedContainer.append(card);
         }
     });
@@ -63,27 +73,31 @@ function addOneTodo(data) {
     titel.innerHTML = data.userId;
     let para = document.createElement("div")
     para.innerHTML = data.todo;
-    let datum = document.createElement("div");
-    datum.innerHTML = ("This card was created: " + new Date());
-    let datumDone = document.createElement("div");
+    para.style.fontSize = "x-large";
+
+
     let todoDone = document.createElement("button");
     todoDone.addEventListener("click", () => { moveTodo(data.id, data.completed, card, data) });
     let deleteBtn = document.createElement("button");
     deleteBtn.innerHTML = "DELETE";
     deleteBtn.addEventListener("click", () => { deleteTodo(data.id, card) });
 
-    card.append(titel, para, datum, datumDone, todoDone, deleteBtn);
+    card.append(titel, para, todoDone, deleteBtn);
 
     if (data.completed === false) {
-        datumDone.innerHTML = ("--");
-        todoDone.innerHTML = "Inte färdig";
+        let datum = document.createElement("div");
+        datum.innerHTML = ("This card was created: " + new Date());
+        todoDone.innerHTML = "Move to Done";
         todoDone.setAttribute("class", "notDone");
+        card.append(datum);
         todoContainer.append(card);
     }
     else {
-        datumDone.innerHTML = new Date();
-        todoDone.innerHTML = "Färdig";
+        let datumDone = document.createElement("div");
+        datumDone.innerHTML = ("This card was completed: " + new Date());
+        todoDone.innerHTML = "Move to Todo";
         todoDone.setAttribute("class", "done");
+        card.append(datumDone);
         completedContainer.append(card);
     }
 
@@ -92,9 +106,6 @@ function addOneTodo(data) {
 
 //Addeventlisteererer
 //add new TODO
-let addNewCard = document.getElementById("addTodoBtn");
-let addCustomCard = document.getElementById("customBtn");
-
 addNewCard.addEventListener("click", () => {
     fetch('https://dummyjson.com/todos/add', {
         method: 'POST',
@@ -108,26 +119,23 @@ addNewCard.addEventListener("click", () => {
         .then(res => res.json())
         .then(data => {
             addOneTodo(data);
-            console.log(data);
         });
 
 })
+
 //// Open/Close Create Custom Card
 addCustomCard.addEventListener("click", () => {
     document.getElementById("customModule").style.display = "grid";
 })
 
-let closeModule = document.getElementById("closeBtn");
+
 
 closeModule.addEventListener("click", () => {
     document.getElementById("customModule").style.display = "none";
 })
 
-///Add custom card
-let submit = document.getElementById("submit");
-let addTitle = document.getElementById("title");
-let addDescription = document.getElementById("description");
 
+///Add custom card
 submit.addEventListener("click", () => {
     let data = {
         id: 999,
@@ -140,14 +148,13 @@ submit.addEventListener("click", () => {
 })
 
 
-
+// Move card from Done <--> Todo
 function moveTodo(id, completed, card, data) {
-    if (id === 999) {
+    if (id === 999 || id === 151) {
         let tempCard = data;
         card.remove();
         tempCard.completed = !tempCard.completed;
         addOneTodo(tempCard);
-        console.log(tempCard);
 
     }
     else {
@@ -162,7 +169,6 @@ function moveTodo(id, completed, card, data) {
             .then(res => res.json())
             .then(data => {
                 addOneTodo(data);
-                console.log(data);
             });
     }
 }
@@ -182,7 +188,3 @@ function deleteTodo(id, card) {
             });
     }
 }
-
-
-//init
-fetchAll();
